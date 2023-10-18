@@ -100,10 +100,10 @@ public class Move_bg : MonoBehaviour
 
     void InputDeRotacao()
     {
-        float inc = 0.3f;
+        float inc = 0.5f;
         if (!facingLeft)
         {
-            inc = -0.3f;
+            inc = -0.5f;
         }
 
         if (Input.GetKey(KeyCode.W))
