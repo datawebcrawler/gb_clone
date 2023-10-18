@@ -19,6 +19,7 @@ public class ParallaxController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        parallaxSpeed = 0.05f;
         cam = Camera.main.transform;
         camStartPos = cam.position;
 

@@ -12,8 +12,8 @@ public class CamController : MonoBehaviour
 
     private void Start()
     {
-        posOffset = new Vector3(0, 0, -10);
-        smooth = 1.0f;
+        posOffset = new Vector3(0, 3, -10);
+        smooth = 0.2f;
 }
 
     private void LateUpdate()
