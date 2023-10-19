@@ -2,9 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Diamante : MonoBehaviour
+public class Projetil : MonoBehaviour
 {
 
+    private void Update()
+    {
+
+        if (gameObject.transform.position.x < -50 || gameObject.transform.position.x > 50 || gameObject.transform.position.y < -10)
+        {
+
+            Destroy(gameObject);
+
+        }
+
+    }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -14,6 +25,7 @@ public class Diamante : MonoBehaviour
             // Destruir o projétil
             Destroy(gameObject);
         }
+       
     }
 
 

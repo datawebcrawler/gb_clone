@@ -39,6 +39,7 @@ public class Move_bg : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        posStart = GetComponent<Transform>();
     }
 
     private void Start()
@@ -52,6 +53,7 @@ public class Move_bg : MonoBehaviour
         RotacaoSeta();
         InputDeRotacao();
         Bala();
+
     }
 
     private void FixedUpdate()
@@ -83,6 +85,7 @@ public class Move_bg : MonoBehaviour
         {
             btnPressed = false;
         }
+
     }
 
     void UpdateSpeedMultiplier()
@@ -103,11 +106,13 @@ public class Move_bg : MonoBehaviour
         transform.Rotate(0, 180, 0);
         zRotate = -1 * zRotate;
         setaImg.rectTransform.Rotate(0, 0, zRotate);
+        Debug.Log("Flip");
     }
 
     void RotacaoSeta()
     {
         setaImg.rectTransform.eulerAngles = new Vector3(0, 0, zRotate);
+
     }
 
     void InputDeRotacao()
@@ -150,4 +155,25 @@ public class Move_bg : MonoBehaviour
                 
 
     }
+
+    //Rotação do player no momento que colide com o terreno
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            if (facingLeft)
+            {
+                posStart.rotation = collision.gameObject.transform.rotation;
+                posStart.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                posStart.rotation = collision.gameObject.transform.rotation;
+                posStart.transform.localScale = new Vector3(1, 1, 1);
+            }
+
+
+        }
+    }
+
 }
