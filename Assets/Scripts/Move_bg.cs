@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
 
 public class Move_bg : MonoBehaviour
 {
@@ -10,9 +12,10 @@ public class Move_bg : MonoBehaviour
     [SerializeField] Transform posStart;
     [SerializeField] Image setaImg;
     public float zRotate;
-
+    public float anguloMira;
+    
     Rigidbody2D rb;
-    private bool facingLeft = true;
+    public bool facingLeft = true;
 
     [SerializeField] int speed = 5;
     float speedMultiplier;
@@ -24,6 +27,14 @@ public class Move_bg : MonoBehaviour
     private Vector2 movement;
 
     public GameObject seta;
+
+    // Impulso do projétil
+    [Range (1.0f, 50.0f)]
+    public float impulsoDoProjetil = 20.0f;
+
+    //variavel da instancia do projetil
+    public GameObject projetil;
+
 
     private void Awake()
     {
@@ -40,6 +51,7 @@ public class Move_bg : MonoBehaviour
     {
         RotacaoSeta();
         InputDeRotacao();
+        Bala();
     }
 
     private void FixedUpdate()
@@ -114,6 +126,28 @@ public class Move_bg : MonoBehaviour
         {
             zRotate += inc;
         }
+
+    }
+
+    void Bala()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            GameObject proj = Instantiate(projetil, transform.position, Quaternion.identity) as GameObject;
+            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
+            if (facingLeft == false)
+            {
+                anguloMira = zRotate;
+                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
+            }
+            else
+            {
+                anguloMira = zRotate;
+                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
+            }
+           
+        }
+                
 
     }
 }
