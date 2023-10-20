@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Diamante : MonoBehaviour
+public class Projectile : MonoBehaviour
 {
-
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         // Verificar se o projétil não está colidindo com o jogador
@@ -15,6 +13,7 @@ public class Diamante : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    
 
-
+    
 }

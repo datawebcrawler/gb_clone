@@ -8,15 +8,13 @@ using UnityEngine.UI;
 
 public class Move_bg : MonoBehaviour
 {
-    // Posição seta
-    [SerializeField] Transform posStart;
+    // Seta na qual indica a direção na qual o projeto será lançado
     [SerializeField] Image setaImg;
     public float zRotate;
-    public float anguloMira;
     
     Rigidbody2D rb;
-    public bool facingLeft = true;
 
+    
     [SerializeField] int speed = 5;
     float speedMultiplier;
 
@@ -26,15 +24,13 @@ public class Move_bg : MonoBehaviour
     bool btnPressed;
     private Vector2 movement;
 
-    public GameObject seta;
-
     // Impulso do projétil
-    [Range (1.0f, 50.0f)]
-    public float impulsoDoProjetil = 20.0f;
+    [Range (1.0f, 30.0f)]
+    public float fireImpulse = 10.0f;
 
-    //variavel da instancia do projetil
-    public GameObject projetil;
-
+    // Projectile GameObject Component;
+    public GameObject projectile;
+    private GameObject projectileInstance = null;
 
     private void Awake()
     {
@@ -44,26 +40,31 @@ public class Move_bg : MonoBehaviour
     private void Start()
     {
         movement = new Vector2(-1.0f, 0.0f);
-        zRotate = 90;
+        zRotate = 84.9f;
     }
 
     private void Update()
     {
+        InputControl();
         RotacaoSeta();
-        InputDeRotacao();
-        Bala();
     }
 
     private void FixedUpdate()
     {
+        // Speed é uma grandeza escalar enquanto velocity contém além da taxa a direção do movimento.
+        // Portanto usamos o speed para controlar a taxa com a qual o objeto se desloca em uma determinada direção
         UpdateSpeedMultiplier();
+        UpdateVelocity();
+    }
+
+    private void UpdateVelocity()
+    {
         float targetSpeed = speed * speedMultiplier * movement.x;
         rb.velocity = new Vector2(targetSpeed, rb.velocity.y);
     }
 
     public void Move(InputAction.CallbackContext value)
     {
-        // const int step = 1000;
         if (value.started)
         {
             if (value.control.name.Equals("a") || value.control.name.Equals("d"))
@@ -99,7 +100,6 @@ public class Move_bg : MonoBehaviour
 
     void flip()
     {
-        facingLeft = !facingLeft;
         transform.Rotate(0, 180, 0);
         zRotate = -1 * zRotate;
         setaImg.rectTransform.Rotate(0, 0, zRotate);
@@ -107,47 +107,58 @@ public class Move_bg : MonoBehaviour
 
     void RotacaoSeta()
     {
-        setaImg.rectTransform.eulerAngles = new Vector3(0, 0, zRotate);
+        setaImg.rectTransform.eulerAngles = Quaternion.Euler(0, 0, zRotate).eulerAngles;
     }
 
-    void InputDeRotacao()
+    void InputControl()
     {
         float inc = 0.5f;
-        if (!facingLeft)
+        if (zRotate < 0)
         {
             inc = -0.5f;
         }
 
         if (Input.GetKey(KeyCode.W))
         {
-            zRotate -= inc;
+            if ((5.0f < zRotate && zRotate > 0.0f) || (-5.0f > zRotate && zRotate < 0.0f))
+            {
+                zRotate -= inc;
+            }
         }
+
+
         if (Input.GetKey(KeyCode.S))
         {
-            zRotate += inc;
+            if ((zRotate < 85.0f && zRotate > 0.0f) || (zRotate > -85.0f && zRotate < 0.0f))
+            {
+                zRotate += inc;
+            }
         }
 
-    }
-
-    void Bala()
-    {
         if (Input.GetButtonDown("Fire1"))
         {
-            GameObject proj = Instantiate(projetil, transform.position, Quaternion.identity) as GameObject;
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            if (facingLeft == false)
-            {
-                anguloMira = zRotate;
-                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-            else
-            {
-                anguloMira = zRotate;
-                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-           
+            Fire();
         }
-                
+    }
 
+    void Fire()
+    {
+        /// <summary>Este método é responsável pelo lançamento de projéteis do mobile.
+        /// <para>
+        /// Ele pega a posição do canhão posiciona a bala em seguida instancia o objeto e lança
+        /// Precisa ser configurado o ângulo de disparo, a velocidade, aceleração
+        /// Quando ele atinge o solo é destuído (removido da memória)
+        /// </para>
+        /// </summary>
+        // Aqui pegamos a posição da seta para posicionar o ponto de largada do projétil
+        if (projectileInstance == null)
+        {
+            projectileInstance = Instantiate(projectile, setaImg.transform.position, Quaternion.identity) as GameObject;
+            Rigidbody2D rb = projectileInstance.GetComponent<Rigidbody2D>();
+            rb.AddForce(Quaternion.Euler(0, 0, zRotate) * transform.up * fireImpulse, ForceMode2D.Impulse);
+            Quaternion targetrotation = Quaternion.LookRotation(movement);
+            targetrotation = Quaternion.RotateTowards(setaImg.transform.rotation, targetrotation, 360 * Time.fixedDeltaTime);
+            rb.MoveRotation(targetrotation);
+        }
     }
 }
