@@ -15,7 +15,6 @@ public class Move_bg : MonoBehaviour
     public float anguloMira;
     
     Rigidbody2D rb;
-    public bool facingLeft = true;
 
     [SerializeField] int speed = 5;
     float speedMultiplier;
@@ -34,12 +33,14 @@ public class Move_bg : MonoBehaviour
 
     //variavel da instancia do projetil
     public GameObject projetil;
+    GameObject projectileInstance = null;
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         posStart = GetComponent<Transform>();
+
     }
 
     private void Start()
@@ -51,8 +52,23 @@ public class Move_bg : MonoBehaviour
     private void Update()
     {
         RotacaoSeta();
-        InputDeRotacao();
-        Bala();
+        InputControl();
+        RotacaoBala();
+  
+    }
+
+    private void RotacaoBala()
+    {
+
+        if (projectileInstance != null) 
+        {
+
+            Rigidbody2D rb_proj = projectileInstance.GetComponent<Rigidbody2D>(); 
+            Vector3 v = rb_proj.velocity;
+            float angle = (Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg) - 90.0f;
+            projectileInstance.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        }
 
     }
 
@@ -102,23 +118,21 @@ public class Move_bg : MonoBehaviour
 
     void flip()
     {
-        facingLeft = !facingLeft;
         transform.Rotate(0, 180, 0);
         zRotate = -1 * zRotate;
         setaImg.rectTransform.Rotate(0, 0, zRotate);
-        Debug.Log("Flip");
     }
 
     void RotacaoSeta()
     {
-        setaImg.rectTransform.eulerAngles = new Vector3(0, 0, zRotate);
+        setaImg.rectTransform.eulerAngles = Quaternion.Euler(0, 0, zRotate).eulerAngles;
 
     }
 
-    void InputDeRotacao()
+    void InputControl()
     {
         float inc = 0.5f;
-        if (!facingLeft)
+        if (zRotate < 0)
         {
             inc = -0.5f;
         }
@@ -131,26 +145,23 @@ public class Move_bg : MonoBehaviour
         {
             zRotate += inc;
         }
-
-    }
-
-    void Bala()
-    {
         if (Input.GetButtonDown("Fire1"))
         {
-            GameObject proj = Instantiate(projetil, transform.position, Quaternion.identity) as GameObject;
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            if (facingLeft == false)
-            {
-                anguloMira = zRotate;
-                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-            else
-            {
-                anguloMira = zRotate;
-                rb.AddForce(Quaternion.Euler(0, 0, anguloMira) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-           
+            Fire();
+        }
+    }
+
+    void Fire()
+    {
+
+        if(projectileInstance == null)
+        {
+            
+            projectileInstance = Instantiate(projetil, setaImg.transform.position, Quaternion.identity) as GameObject;
+            Rigidbody2D rb = projectileInstance.GetComponent<Rigidbody2D>();
+            rb.AddForce(Quaternion.Euler(0, 0, zRotate) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
+
+
         }
                 
 
@@ -161,17 +172,7 @@ public class Move_bg : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            if (facingLeft)
-            {
-                posStart.rotation = collision.gameObject.transform.rotation;
-                posStart.transform.localScale = new Vector3(-1, 1, 1);
-            }
-            else
-            {
-                posStart.rotation = collision.gameObject.transform.rotation;
-                posStart.transform.localScale = new Vector3(1, 1, 1);
-            }
-
+            posStart.transform.localScale = new Vector3(Mathf.CeilToInt(zRotate/Mathf.Abs(zRotate)), 1, 1);
 
         }
     }

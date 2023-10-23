@@ -18,19 +18,19 @@ public class Arma : MonoBehaviour
     // Método para disparar o projétil
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            GameObject proj = Instantiate(projetil, transform.position, Quaternion.identity) as GameObject;
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            if (mb.facingLeft == false)
-            {
-                rb.AddForce(Quaternion.Euler(0, 0, anguloDeLancamento) * transform.right * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-            else
-            {
-                rb.AddForce(Quaternion.Euler(0, 0, anguloDeLancamento) * -transform.right * impulsoDoProjetil, ForceMode2D.Impulse);
-            }
-        }
+        //if (Input.GetButtonDown("Fire1"))
+        //{
+        //    GameObject proj = Instantiate(projetil, transform.position, Quaternion.identity) as GameObject;
+        //    Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
+        //    if (mb.facingLeft == false)
+        //    {
+        //        rb.AddForce(Quaternion.Euler(0, 0, anguloDeLancamento) * transform.right * impulsoDoProjetil, ForceMode2D.Impulse);
+        //    }
+        //    else
+        //    {
+        //        rb.AddForce(Quaternion.Euler(0, 0, anguloDeLancamento) * -transform.right * impulsoDoProjetil, ForceMode2D.Impulse);
+        //    }
+        //}
 
     }
 

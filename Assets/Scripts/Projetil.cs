@@ -25,7 +25,7 @@ public class Projetil : MonoBehaviour
             // Destruir o projétil
             Destroy(gameObject);
         }
-       
+
     }
 
 
