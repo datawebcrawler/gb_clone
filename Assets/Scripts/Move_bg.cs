@@ -12,8 +12,10 @@ public class Move_bg : MonoBehaviour
     [SerializeField] Transform posStart;
     [SerializeField] Image setaImg;
     public float zRotate;
+    public float anguloMira;
     
     Rigidbody2D rb;
+    public bool facingLeft = true;
 
     [SerializeField] int speed = 5;
     float speedMultiplier;
@@ -34,7 +36,6 @@ public class Move_bg : MonoBehaviour
     public GameObject projetil;
     GameObject projectileInstance = null;
 
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -45,11 +46,12 @@ public class Move_bg : MonoBehaviour
     private void Start()
     {
         movement = new Vector2(-1.0f, 0.0f);
-        zRotate = 90;
+        zRotate = 84.9f;
     }
 
     private void Update()
     {
+        InputControl();
         RotacaoSeta();
         InputControl();
         RotacaoBala();
@@ -71,6 +73,8 @@ public class Move_bg : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Speed é uma grandeza escalar enquanto velocity contém além da taxa a direção do movimento.
+        // Portanto usamos o speed para controlar a taxa com a qual o objeto se desloca em uma determinada direção
         UpdateSpeedMultiplier();
         float targetSpeed = speed * speedMultiplier * movement.x;
         rb.velocity = new Vector2(targetSpeed, rb.velocity.y);
@@ -135,12 +139,21 @@ public class Move_bg : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            zRotate -= inc;
+            if ((5.0f < zRotate && zRotate > 0.0f) || (-5.0f > zRotate && zRotate < 0.0f))
+            {
+                zRotate -= inc;
+            }
         }
+
+
         if (Input.GetKey(KeyCode.S))
         {
-            zRotate += inc;
+            if ((zRotate < 85.0f && zRotate > 0.0f) || (zRotate > -85.0f && zRotate < 0.0f))
+            {
+                zRotate += inc;
+            }
         }
+
         if (Input.GetButtonDown("Fire1"))
         {
             Fire();
