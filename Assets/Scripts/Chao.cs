@@ -74,7 +74,7 @@ public class Chao : MonoBehaviour
 
     void MakeAHole(CircleCollider2D col)
     {
-        print(string.Format("{0},{1},{2},{3}", WidthPixel, HeightPixel, WidthWorld, heightWorld)); //Log
+        //print(string.Format("{0},{1},{2},{3}", WidthPixel, HeightPixel, WidthWorld, heightWorld)); //Log
 
         Vector2Int centro = World2Pixel(col.bounds.center); // Pega o vetor do centro da colisão com as coordenadas do obejto colidindo(col)
         int raio = Mathf.RoundToInt(col.bounds.size.x * WidthPixel / WidthWorld); // define o raio de acordo com a largura do collider###não entendi o final###
@@ -82,7 +82,7 @@ public class Chao : MonoBehaviour
         int x_positivo, x_negativo, y_positivo, y_negativo, distancia_pixel; // define as variaveis pra decidir o que fica transparente ou não
         for (int i = 0; i <= raio; i++) //itera por todos os pixels do quadrado para saber quais estão dentro do circulo.
         {
-            distancia_pixel = Mathf.RoundToInt(Mathf.Sqrt(raio * raio - i * i)); //Teorema de Pitagoras pra marcar quais pixels ficam transparentes a partir do raio e x do triangulo
+            distancia_pixel = Mathf.RoundToInt(Mathf.Sqrt( raio * raio - i * i)); //Teorema de Pitagoras pra marcar quais pixels ficam transparentes a partir do raio e x do triangulo
             for (int j = 0; j <= distancia_pixel; j++)
             {
                 x_positivo = centro.x + i;
@@ -115,12 +115,14 @@ public class Chao : MonoBehaviour
                             );
     }
 
-    Vector2Int World2Pixel(Vector2 pos)
+    Vector2Int World2Pixel(Vector2 centro_colisao)
     {
         Vector2Int v = Vector2Int.zero;
 
-        var dx = (pos.x - transform.position.x);
-        var dy = (pos.y - transform.position.y);
+        var dx = (centro_colisao.x - transform.position.x); //chão
+        var dy = (centro_colisao.y - transform.position.y);
+
+        print($"chao dx dy centro: {transform.position} # {dx} # {dy} # {centro_colisao}");
 
         v.x = Mathf.RoundToInt(0.5f * WidthPixel + dx * (WidthPixel / WidthWorld));
         v.y = Mathf.RoundToInt(0.5f * HeightPixel + dy * (HeightPixel / HeightWorld));
@@ -131,7 +133,7 @@ public class Chao : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (!collision.CompareTag("Explosivo"))
+        if (!collision.CompareTag("Explosion"))
             return;
         if (!collision.GetComponent<CircleCollider2D>())
             return;
