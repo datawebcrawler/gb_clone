@@ -12,7 +12,6 @@ public class Move_bg : MonoBehaviour
     [SerializeField] Transform posStart;
     [SerializeField] Image setaImg;
     public float zRotate;
-    public float anguloMira;
     
     Rigidbody2D rb;
 
@@ -29,7 +28,7 @@ public class Move_bg : MonoBehaviour
 
     // Impulso do projétil
     [Range (1.0f, 50.0f)]
-    public float impulsoDoProjetil = 20.0f;
+    public float impulsoDoProjetil = 10.0f;
 
     //variavel da instancia do projetil
     public GameObject projetil;
@@ -67,9 +66,7 @@ public class Move_bg : MonoBehaviour
             Vector3 v = rb_proj.velocity;
             float angle = (Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg) - 90.0f;
             projectileInstance.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
         }
-
     }
 
     private void FixedUpdate()
@@ -81,7 +78,6 @@ public class Move_bg : MonoBehaviour
 
     public void Move(InputAction.CallbackContext value)
     {
-        // const int step = 1000;
         if (value.started)
         {
             if (value.control.name.Equals("a") || value.control.name.Equals("d"))
@@ -156,25 +152,9 @@ public class Move_bg : MonoBehaviour
 
         if(projectileInstance == null)
         {
-            
             projectileInstance = Instantiate(projetil, setaImg.transform.position, Quaternion.identity) as GameObject;
             Rigidbody2D rb = projectileInstance.GetComponent<Rigidbody2D>();
             rb.AddForce(Quaternion.Euler(0, 0, zRotate) * transform.up * impulsoDoProjetil, ForceMode2D.Impulse);
-
-
-        }
-                
-
-    }
-
-    //Rotação do player no momento que colide com o terreno
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            posStart.transform.localScale = new Vector3(Mathf.CeilToInt(zRotate/Mathf.Abs(zRotate)), 1, 1);
-
         }
     }
-
 }

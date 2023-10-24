@@ -132,8 +132,7 @@ public class Chao : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
-        if (!collision.CompareTag("Explosion"))
+         if (!collision.CompareTag("Explosion"))
             return;
         if (!collision.GetComponent<CircleCollider2D>())
             return;
